@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta name="format-detection" content="telephone=no">
+  <title>websocket demo</title>
+</head>
+<body>
+<button class="d-btn-send">发送消息</button>
+<button class="d-btn-cancel">取消连接</button>
+<button class="d-btn-reset">重启websocket</button>
+
+<script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="websocket.js" type="text/javascript"></script>
+<script>
+  $.newSocket({
+    socketIp: 'echo.websocket.org/',
+    wsUrl: '',
+    sockUrl: null,
+    openSendMsg: openSendMsg,
+    sendMsg: sendMsg,
+    receiveMsg: receiveMsg,
+    timeout: 10000
+  });
+  function openSendMsg() {
+    var msg = '发送消息，连接上了';
+    return msg;
+  }
+  function sendMsg(ws) {
+    $('.d-btn-start').off('click').on('click', function() {
+      var msg = '发送1';
+      ws.send(msg);
+    })
+  }
+  // 函数：接收onmessage消息
+  function receiveMsg(event) {
+    if (isJSON(event.data)) {
+      var msgData = JSON.parse(event.data);
+      console.log(msgData);
+    } else {
+      console.log(event.data);
+    }
+  }
+  // 函数：判断当前数据是否为json格式
+  function isJSON(str) {
+    if (typeof str == 'string') {
+      try {
+        var obj=JSON.parse(str);
+        if(typeof obj == 'object' && obj ){
+          return true;
+        }else{
+          return false;
+        }
+      } catch(e) {
+        // console.log('error：'+str+'!!!'+e);
+        return false;
+      }
+    }
+    // console.log('It is not a string!')
+  }
+
+
+  $('.d-btn-cancel').on('click', function() {
+    $.newSocket({
+      cancelSocket: true
+    });
+  })
+  $('.d-btn-reset').on('click', function() {
+    $.newSocket({
+//            wsUrl: '/kf/webSocket/message.htm',
+//            sockUrl: '/kf/webSocket/sockjs/message.htm',
+//            receiveMsg: receiveMsg
+
+//            socketIp: 'demo.serviceflows.cn',
+      wsUrl: '/kf/webSocket/message.htm',
+      sockUrl: null,
+      sendMsg: sendMsg,
+      receiveMsg: receiveMsg,
+      timeout: 10000
+    });
+  })
+</script>
+</body>
+</html>
